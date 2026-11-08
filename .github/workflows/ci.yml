@@ -1,0 +1,14 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: contracts } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: foundry-rs/foundry-toolchain@v1
+        with: { version: v1.5.1 }
+      - run: forge build
+      - run: forge test --match-path 'test/unit/*'
+      - run: forge test --match-path 'test/fork/*'
+        env: { ARBITRUM_RPC_URL: ${{ secrets.ARBITRUM_RPC_URL }} }
